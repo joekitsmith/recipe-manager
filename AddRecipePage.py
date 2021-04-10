@@ -170,7 +170,7 @@ class SaveWidget(qtw.QWidget):
         self.save_text = qtw.QLabel()
         self.discard_text = qtw.QLabel()
 
-        picture_list = [self.save_picture, self.discard_picture]
+        pic_list = [self.save_picture, self.discard_picture]
         image_list = ["/Users/josephsmith/Documents/recipe-manager/icons/save_green.tiff",
                        "/Users/josephsmith/Documents/recipe-manager/icons/delete_red.tiff"]
         text_list = [self.save_text, self.discard_text]
@@ -180,8 +180,8 @@ class SaveWidget(qtw.QWidget):
             icon = qtg.QIcon()
             icon.addFile(image)
             pixmap = icon.pixmap(qtc.QSize(60,40))
-            picture_list[i].setPixmap(pixmap)
-            picture_list[i].setAlignment(qtc.Qt.AlignCenter)
+            pic_list[i].setPixmap(pixmap)
+            pic_list[i].setAlignment(qtc.Qt.AlignCenter)
             text_list[i].setText(text_string_list[i])
             text_list[i].setAlignment(qtc.Qt.AlignCenter | qtc.Qt.AlignTop)
             text_list[i].setStyleSheet("""QWidget {font: 12pt 'Avenir'; font-weight: bold}""")
