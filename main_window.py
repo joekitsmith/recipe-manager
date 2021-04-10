@@ -1,4 +1,5 @@
 import sys
+import os
 import PyQt5.QtWidgets as qtw
 import PyQt5.QtCore as qtc
 import PyQt5.QtGui as qtg
@@ -24,7 +25,7 @@ class MainWindow(qtw.QMainWindow):
         sidebarContent = sidebar.sidebarContent
         
         self.test_recipe = RecipePage.RecipeWidget()
-        self.test_recipe.exampleRecipe()
+        self.test_recipe.getRecipe(1)
         
         self.scroll = qtw.QScrollArea()
         self.scroll.setVerticalScrollBarPolicy(qtc.Qt.ScrollBarAlwaysOn)
@@ -52,25 +53,30 @@ class MainWindow(qtw.QMainWindow):
         self.setCentralWidget(total_widget)
 
         self.showMaximized()
-
+            
+        
     def openFeaturedPage(self):
         self.FeaturedPage = FeaturedPage.FeaturedWidget()
-        self.test_recipe = RecipePage.RecipeWidget()
-        self.test_recipe.exampleRecipe()
-        self.FeaturedPage.addFeaturedCategory("Vegan")
+
         self.FeaturedPage.addFeaturedCategory("Vegetarian")
-        self.FeaturedPage.addFeaturedRecipe(self.test_recipe, "Vegan")
-        self.FeaturedPage.addFeaturedRecipe(self.test_recipe, "Vegan")
-        self.FeaturedPage.addFeaturedRecipe(self.test_recipe, "Vegan")
-        self.FeaturedPage.addFeaturedRecipe(self.test_recipe, "Vegan")
-        self.FeaturedPage.addFeaturedRecipe(self.test_recipe, "Vegan")
-        self.FeaturedPage.addFeaturedRecipe(self.test_recipe, "Vegan")
-        self.FeaturedPage.addFeaturedRecipe(self.test_recipe, "Vegetarian")
-        self.FeaturedPage.addFeaturedRecipe(self.test_recipe, "Vegetarian")
-        self.FeaturedPage.addFeaturedRecipe(self.test_recipe, "Vegetarian")
-        self.FeaturedPage.addFeaturedRecipe(self.test_recipe, "Vegetarian")
-        self.FeaturedPage.addFeaturedRecipe(self.test_recipe, "Vegetarian")
-        self.FeaturedPage.addFeaturedRecipe(self.test_recipe, "Vegetarian")
+        self.FeaturedPage.addFeaturedCategory("Carb heavy")
+        self.FeaturedPage.addFeaturedCategory("Saltier than the sea")
+
+        self.FeaturedPage.addFeaturedRecipe(RecipePage.RecipeWidget().getRecipe(1), "Vegetarian")
+        self.FeaturedPage.addFeaturedRecipe(RecipePage.RecipeWidget().getRecipe(2), "Vegetarian")
+        self.FeaturedPage.addFeaturedRecipe(RecipePage.RecipeWidget().getRecipe(3), "Vegetarian")
+        self.FeaturedPage.addFeaturedRecipe(RecipePage.RecipeWidget().getRecipe(4), "Vegetarian")
+        self.FeaturedPage.addFeaturedRecipe(RecipePage.RecipeWidget().getRecipe(5), "Vegetarian")
+        self.FeaturedPage.addFeaturedRecipe(RecipePage.RecipeWidget().getRecipe(9), "Vegetarian")
+        self.FeaturedPage.addFeaturedRecipe(RecipePage.RecipeWidget().getRecipe(6), "Saltier than the sea")
+        self.FeaturedPage.addFeaturedRecipe(RecipePage.RecipeWidget().getRecipe(7), "Saltier than the sea")
+        self.FeaturedPage.addFeaturedRecipe(RecipePage.RecipeWidget().getRecipe(10), "Saltier than the sea")
+        self.FeaturedPage.addFeaturedRecipe(RecipePage.RecipeWidget().getRecipe(10), "Carb heavy")
+        self.FeaturedPage.addFeaturedRecipe(RecipePage.RecipeWidget().getRecipe(8), "Carb heavy")
+        self.FeaturedPage.addFeaturedRecipe(RecipePage.RecipeWidget().getRecipe(7), "Carb heavy")
+        self.FeaturedPage.addFeaturedRecipe(RecipePage.RecipeWidget().getRecipe(1), "Carb heavy")
+        self.FeaturedPage.addFeaturedRecipe(RecipePage.RecipeWidget().getRecipe(5), "Carb heavy")
+        
         self.scroll.setWidget(self.FeaturedPage)
 
     def openBrowsePage(self):

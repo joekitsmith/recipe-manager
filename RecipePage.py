@@ -1,6 +1,8 @@
 import PyQt5.QtWidgets as qtw
 import PyQt5.QtCore as qtc
 import PyQt5.QtGui as qtg
+import base64
+import PostgreSQL
 
 class RecipeWidget(qtw.QWidget):
     def __init__(self, *args, **kwargs):
@@ -26,25 +28,9 @@ class RecipeWidget(qtw.QWidget):
         self.instructions_body.setWordWrap(True)
 
         self.picture = qtw.QLabel()
-        image = qtg.QImage("/Users/josephsmith/Desktop/sweet_potato.webp")
-        pixmap = qtg.QPixmap.fromImage(image.scaled(350,350))
-        radius = 50
-        rounded = qtg.QPixmap(pixmap.size())
-        rounded.fill(qtg.QColor("transparent"))
-        painter = qtg.QPainter(rounded)
-        painter.setRenderHint(qtg.QPainter.Antialiasing)
-        painter.setBrush(qtg.QBrush(pixmap))
-        painter.setPen(qtg.QPen(qtc.Qt.black, 5))
-        path = qtg.QPainterPath()
-        rect = qtc.QRectF(pixmap.rect())
-        path.addRoundedRect(rect, radius, radius)
-        painter.setClipPath(path)
-        painter.fillPath(path, painter.brush())
-        painter.strokePath(path, painter.pen())
-        painter.end()
-        self.picture.setPixmap(rounded)
-        self.picture.setAlignment(qtc.Qt.AlignCenter)
-
+        binary_img = open("/Users/josephsmith/Documents/recipe-manager/recipe_images/mexican-style_stuffed_sweet_potatoes.webp", 'rb').read()
+        self.picture_data = binary_img
+        
         middle_label1 = qtw.QLabel()
 
         layout = qtw.QGridLayout()
@@ -81,28 +67,50 @@ class RecipeWidget(qtw.QWidget):
         for n, info in enumerate(input_info):
             self.test_info.info_body[n].setText(self.test_info.info_body[n].text() + info)
 
-    def exampleRecipe(self):
-        title = "Mexican-style stuffed sweet potatoes"
+    def addPicture(self, picture_data):
+        self.picture_data = picture_data
+
+    def drawPicture(self):
+        image = qtg.QImage()
+        image.loadFromData(self.picture_data)
+        pixmap = qtg.QPixmap.fromImage(image.scaled(350,350, qtc.Qt.KeepAspectRatio, qtc.Qt.SmoothTransformation))
+        radius = 50
+        rounded = qtg.QPixmap(pixmap.size())
+        rounded.fill(qtg.QColor("transparent"))
+        painter = qtg.QPainter(rounded)
+        painter.setRenderHint(qtg.QPainter.Antialiasing)
+        painter.setBrush(qtg.QBrush(pixmap))
+        painter.setPen(qtg.QPen(qtc.Qt.black, 5))
+        path = qtg.QPainterPath()
+        rect = qtc.QRectF(pixmap.rect())
+        path.addRoundedRect(rect, radius, radius)
+        painter.setClipPath(path)
+        painter.fillPath(path, painter.brush())
+        painter.strokePath(path, painter.pen())
+        painter.end()
+        self.picture.setPixmap(rounded)
+        self.picture.setAlignment(qtc.Qt.AlignCenter)
+
+    def getRecipe(self, id_num):
+        psql = PostgreSQL.PostgreSQL()
+        psql.openConnection()
+        title, feeds, calories, prep, cook, instructions, image = psql.extractRecipe(id_num)
+        psql.closeConnection()
+        recipe_info = [str(feeds), str(calories), str(prep), str(cook)]
+
         ingredient_list = ["4 sweet potatoes", "1 brown onion", "2 peppers", "2 red chillis",
                             "1 bunch of spring onions", "400g black beans", "3 limes", 
                             "2 large avocados", "2 garlic cloves", "2 tsp ground cumin", 
                             "2 tsp paprika", "2 tsp chilli flakes", "1 handful of coriander"]
-        instruction_list = ["Preheat the oven to 180°C fan (200°C/400°F/Gas Mark 6).",
-                            "Drizzle the sweet potatoes in olive oil, and sprinkle over salt and a small handful of dried chilli flakes. \nBake them in the oven for 50 minutes or until soft.",
-                            "While the sweet potatoes are in the oven, sort the guac. Scoop the flesh out of the avocados and add to a bowl. \nAdd a handful of chopped coriander (save some to garnish), the juice of a lime, a finely chopped red chilli, some salt, pepper and olive oil. \nMish mash.",
-                            "Finely chop the brown onion, peppers, chilli and a bunch of spring onions. In a pan, add a splash of olive oil. \nAdd chopped garlic, 2 teaspoons of ground cumin and 2 teaspoons of paprika.",
-                            "Once the garlic has softened (1 minute), add the peppers and brown onion. Fry until soft, on a medium-low heat. \nThis should take about 10-15 minutes. Add a bit of water if it starts catching on the pan.",
-                            "Once softened, chuck in the black beans. Mash everything together well. Remove your sweet potatoes from the oven. \nScoop out the flesh, and save the skins. Add the flesh to the black bean chilli. Mix everything together.",
-                            "Assembly time. Re-stuff the sweet potato skins with the black bean chilli. Add a big dollop of guac. \nTop with a generous grating of Cheddar, and garnish with the chopped spring onions, chopped red chilli and remaining coriander.",
-                            "Squeeze over some lime juice to finish. Enjoy!"]
-        recipe_info = ["4", "300", "25 mins", "30 mins"]
 
         self.addTitle(title)
         for ingredient in ingredient_list:
             self.addIngredient(ingredient)
-        for instruction in instruction_list:
-            self.addInstruction(instruction)
+        self.addInstruction(instructions)
         self.addInfo(recipe_info)
+        self.addPicture(image)
+        self.drawPicture()
+        return(self)
 
 class info_widget(qtw.QWidget):
     def __init__(self, *args, **kwargs):

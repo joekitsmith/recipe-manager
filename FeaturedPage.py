@@ -31,7 +31,7 @@ class FeaturedWidget(qtw.QWidget):
 
     def addFeaturedRecipe(self, recipe, category):
         featured_recipe = FeaturedRecipe()
-        featured_recipe.picture = recipe.picture
+        featured_recipe.picture_data = recipe.picture_data
         featured_recipe.title_text = recipe.main_title.text()
         featured_recipe.layoutFeaturedRecipe()
         category = self.category_dict[category]
@@ -73,7 +73,7 @@ class FeaturedCategory(qtw.QWidget):
         self.listLayout.setSpacing(80)
         self.listLayout.setContentsMargins(30,15,0,0)
         self.scroll.setWidget(widget)
-        self.scroll.setMinimumHeight(310)
+        self.scroll.setMinimumHeight(340)
 
 
 class FeaturedRecipe(qtw.QWidget):
@@ -81,24 +81,26 @@ class FeaturedRecipe(qtw.QWidget):
         super(FeaturedRecipe, self).__init__(*args, **kwargs)
 
         self.title = qtw.QLabel()
-        self.picture = None
+        self.picture = qtw.QLabel()
         self.title_text = None
+        self.picture_data = None
 
     def layoutFeaturedRecipe(self):
         
         self.title.setText(self.title_text)
-        self.title.setStyleSheet("""QWidget {font: 20pt 'Avenir'; font-weight: 300;}""")
+        self.title.setStyleSheet("""QWidget {font: 20pt 'Avenir'; font-weight: 300; padding: 0px 0px 10px 0px;}""")
+        self.title.setMaximumWidth(250)
 
-        self.picture = qtw.QLabel()
-        image = qtg.QImage("/Users/josephsmith/Desktop/sweet_potato.webp")
+        image = qtg.QImage()
+        image.loadFromData(self.picture_data)
         pixmap = qtg.QPixmap.fromImage(image.scaled(200,200))
-        radius = 50
+        radius = 30
         rounded = qtg.QPixmap(pixmap.size())
         rounded.fill(qtg.QColor("transparent"))
         painter = qtg.QPainter(rounded)
         painter.setRenderHint(qtg.QPainter.Antialiasing)
         painter.setBrush(qtg.QBrush(pixmap))
-        painter.setPen(qtg.QPen(qtc.Qt.black, 5))
+        painter.setPen(qtg.QPen(qtc.Qt.black, 3))
         path = qtg.QPainterPath()
         rect = qtc.QRectF(pixmap.rect())
         path.addRoundedRect(rect, radius, radius)
@@ -114,5 +116,5 @@ class FeaturedRecipe(qtw.QWidget):
         self.layout.addWidget(self.title)
         self.title.setAlignment(qtc.Qt.AlignTop | qtc.Qt.AlignHCenter)
         self.title.setWordWrap(True)
-        self.picture.setAlignment(qtc.Qt.AlignBottom | qtc.Qt.AlignHCenter)
+        self.picture.setAlignment(qtc.Qt.AlignVCenter | qtc.Qt.AlignHCenter)
         self.setLayout(self.layout)
