@@ -4,33 +4,47 @@ import PyQt5.QtGui as qtg
 import PostgreSQL
 
 class AddRecipeWidget(qtw.QWidget):
-
+    
     def __init__(self, *args, **kwargs):
         super(AddRecipeWidget, self).__init__(*args, **kwargs)
-
+        
+        self.createWidgets()
+        self.configureLayout()
+        
+    def createWidgets(self):
+        
         self.background_label = qtw.QLabel()
         self.background_label.setStyleSheet("""QWidget {background-color: rgba(254,174,0,20)}""")
+
         self.main_title = qtw.QLineEdit()
-        self.main_title.setMinimumHeight(70)
-        self.main_title.setStyleSheet("""QWidget {font: 30pt 'Avenir'; font-weight: bold; padding: 10px 10px 10px 10px;}""")
         self.main_title.setPlaceholderText("Recipe title")
+        self.main_title.setMinimumHeight(70)
+        self.main_title.setStyleSheet("""QWidget {font: 30pt 'Avenir'; 
+                                      font-weight: bold;
+                                      padding: 10px 10px 10px 10px;}""")
+        
         self.info_widget = InfoWidget()
 
         self.ingredients_title = qtw.QLabel()
         self.ingredients_title.setText("Ingredients")
-        self.ingredients_title.setStyleSheet("""QWidget {font: 25pt 'Avenir'; font-weight: bold}""")
-        self.ingredient_widget = IngredientWidget()
+        self.ingredients_title.setStyleSheet("""QWidget {font: 25pt 'Avenir'; 
+                                        font-weight: bold}""")
+
+        self.ingredients_widget = IngredientWidget()
 
         self.instructions_title = qtw.QLabel()
         self.instructions_title.setText("Instructions")
-        self.instructions_title.setStyleSheet("""QWidget {font: 25pt 'Avenir'; font-weight: bold}""")
+        self.instructions_title.setStyleSheet("""QWidget {font: 25pt 'Avenir'; 
+                                         font-weight: bold}""")
+
         self.instructions_edit = qtw.QTextEdit()
-        self.instructions_edit.setStyleSheet("""QWidget {font: 16pt 'Avenir'; padding 5px 5px 5px 5px}""")
         self.instructions_edit.setPlaceholderText("Instructions")
         self.instructions_edit.setMinimumHeight(300)
+        self.instructions_edit.setStyleSheet("""QWidget {font: 16pt 'Avenir'; 
+                                             padding 5px 5px 5px 5px}""")
 
         self.picture = qtw.QLabel()
-        image = "/Users/josephsmith/Documents/recipe-manager/icons/photo_black.tiff"
+        image = "icons/photo_black.tiff"
         icon = qtg.QIcon()
         icon.addFile(image)
         pixmap = icon.pixmap(qtc.QSize(100,70))
@@ -41,15 +55,15 @@ class AddRecipeWidget(qtw.QWidget):
         save_button = self.save_widget.save_button
         save_button.clicked.connect(self.click_save)
 
-        #self.discard_button.clicked.connect(click_discard)
-
+    def configureLayout(self):
+        
         top_layout = qtw.QGridLayout()
         top_layout.addWidget(self.main_title, 0, 0, 1, 1)
         top_layout.addWidget(self.info_widget, 1, 0, 1, 1)
 
         bottom_layout = qtw.QGridLayout()
         bottom_layout.addWidget(self.ingredients_title, 0, 0, 1, 1)
-        bottom_layout.addWidget(self.ingredient_widget, 1, 0, 1, 1)
+        bottom_layout.addWidget(self.ingredients_widget, 1, 0, 1, 1)
         bottom_layout.addWidget(self.picture, 1, 1, 1, 1)
         bottom_layout.addWidget(self.instructions_title, 2, 0, 1, 1)
         bottom_layout.addWidget(self.instructions_edit, 3, 0, 1, 2)
@@ -75,6 +89,7 @@ class AddRecipeWidget(qtw.QWidget):
         self.setLayout(layout)
 
     def error_check(self):
+        # Check if correct information has been added to text edits
 
         def check_num(string):
             char_true = False
@@ -103,10 +118,10 @@ class AddRecipeWidget(qtw.QWidget):
         true_list.append(check_num(self.info_widget.cook_info.text()))
 
         ingred_true = []
-        for n, ingredient_edit in enumerate(self.ingredient_widget.ingredient_edit_list):
+        for n, ingredient_edit in enumerate(self.ingredients_widget.ingredient_edit_list):
             ingredient = ingredient_edit.text()
-            amount = self.ingredient_widget.amount_edit_list[n].text()
-            prep = self.ingredient_widget.prep_edit_list[n].text()
+            amount = self.ingredients_widget.amount_edit_list[n].text()
+            prep = self.ingredients_widget.prep_edit_list[n].text()
             if check_len(ingredient) or check_len(amount) or check_len(prep) == False:
                 ingred_true.append(False)
             else:
@@ -124,8 +139,9 @@ class AddRecipeWidget(qtw.QWidget):
         else:
             return(False)
 
-
     def click_save(self):
+        # TODO Upload recipe information to database
+        
         print("hello")
         if self.error_check() == True:
             print("worked")
@@ -140,11 +156,11 @@ class AddRecipeWidget(qtw.QWidget):
             ingredient_list = []
             amount_list = []
             prep_list = []
-            for n, ingredient_edit in enumerate(self.ingredient_widget.ingredient_edit_list):
+            for n, ingredient_edit in enumerate(self.ingredients_widget.ingredient_edit_list):
                 ingredient_list.append(ingredient_edit.text())
-                amount = self.ingredient_widget.amount_edit_list[n]
+                amount = self.ingredients_widget.amount_edit_list[n]
                 amount_list.append(amount.text())
-                prep = self.ingredient_widget.prep_edit_list[n]
+                prep = self.ingredients_widget.prep_edit_list[n]
                 prep_list.append(prep.text())
                 
 
@@ -157,22 +173,29 @@ class AddRecipeWidget(qtw.QWidget):
 
 
 class SaveWidget(qtw.QWidget):
+    
     def __init__(self, *args, **kwargs):
         super(SaveWidget, self).__init__(*args, **kwargs)
 
+        self.createWidgets()
+        self.configureLayout()
+
+    def createWidgets(self):
+        
         self.background_label = qtw.QLabel()
         self.background_label.setStyleSheet("""QWidget {background-color: rgba(254,174,0,50)}""")
         self.background_label.setMinimumWidth(100)
 
         self.save_picture = qtw.QLabel()
         self.save_picture.setContentsMargins(0,20,0,0)
-        self.discard_picture = qtw.QLabel()
         self.save_text = qtw.QLabel()
+        
+        self.discard_picture = qtw.QLabel()
         self.discard_text = qtw.QLabel()
 
         pic_list = [self.save_picture, self.discard_picture]
-        image_list = ["/Users/josephsmith/Documents/recipe-manager/icons/save_green.tiff",
-                       "/Users/josephsmith/Documents/recipe-manager/icons/delete_red.tiff"]
+        image_list = ["icons/save_green.tiff",
+                       "icons/delete_red.tiff"]
         text_list = [self.save_text, self.discard_text]
         text_string_list = ["Save", "Delete"]
 
@@ -194,6 +217,8 @@ class SaveWidget(qtw.QWidget):
             button.setStyleSheet("""QWidget {background-color: rgba(254,255,255,0); margin: 15px}""")
             button.setCursor(qtg.QCursor(qtc.Qt.PointingHandCursor))
 
+    def configureLayout(self):
+        
         layout = qtw.QGridLayout()
         layout.addWidget(self.background_label, 0, 0, 5, 1)
         layout.addWidget(self.save_picture, 1, 0, 1, 1)
@@ -210,10 +235,17 @@ class SaveWidget(qtw.QWidget):
 
         self.setLayout(layout)
 
+
 class IngredientWidget(qtw.QWidget):
+    
     def __init__(self, *args, **kwargs):
         super(IngredientWidget, self).__init__(*args, **kwargs)
 
+        self.createWidgets()
+        self.configureLayout()
+
+    def createWidgets(self):
+        
         self.ingredient_edit_list = []
         self.amount_edit_list = []
         self.prep_edit_list = []
@@ -225,11 +257,13 @@ class IngredientWidget(qtw.QWidget):
         self.add_button.clicked.connect(self.addIngredient)
 
         icon = qtg.QIcon()
-        icon.addFile("/Users/josephsmith/Documents/recipe-manager/icons/add_black.tiff")
+        icon.addFile("icons/add_black.tiff")
         pixmap = icon.pixmap(qtc.QSize(20,20))
         self.add_label = qtw.QLabel()
         self.add_label.setPixmap(pixmap)
 
+    def configureLayout(self):
+        
         self.total_layout = qtw.QGridLayout()
         self.ingredient_layout = qtw.QGridLayout()
         self.add_layout = qtw.QGridLayout()
@@ -245,18 +279,21 @@ class IngredientWidget(qtw.QWidget):
         self.total_layout.setVerticalSpacing(10)
         self.setLayout(self.total_layout)
 
-
     def addIngredient(self):
+        # Add new ingredient, amonut and prep text edits to page
 
         ingredient_edit = qtw.QLineEdit()
         ingredient_edit.setPlaceholderText("Ingredient")
         ingredient_edit.setMinimumWidth(200)
+        
         amount_edit = qtw.QLineEdit()
         amount_edit.setPlaceholderText("Amount")
         amount_edit.setMinimumWidth(150)
+        
         prep_edit = qtw.QLineEdit()
         prep_edit.setPlaceholderText("Preparation")
         prep_edit.setMinimumWidth(200)
+        
         edit_list = [ingredient_edit, amount_edit, prep_edit]
         for edit in edit_list:
             edit.setStyleSheet("""QWidget {font: 16pt 'Avenir'; padding: 3px 3px 3px 3px;}""")
@@ -273,8 +310,14 @@ class IngredientWidget(qtw.QWidget):
 
 
 class InfoWidget(qtw.QWidget):
+    
     def __init__(self, *args, **kwargs):
         super(InfoWidget, self).__init__(*args, **kwargs)
+        
+        self.createWidgets()
+        self.configureLayout()
+        
+    def createWidgets(self):
 
         self.feeds_title = qtw.QLabel()
         self.feeds_title.setText("Feeds:")
@@ -298,6 +341,8 @@ class InfoWidget(qtw.QWidget):
 
         for info in self.info_body:
             info.setStyleSheet("""QWidget {font: 16pt 'Avenir'; padding: 2px 2px 2px 2px}""")
+            
+    def configureLayout(self):
 
         layout = qtw.QGridLayout()
         layout.addWidget(self.feeds_title, 0, 0, 1, 1)
